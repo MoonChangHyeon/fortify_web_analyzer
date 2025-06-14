@@ -23,11 +23,12 @@
 </head>
 <body>
     <div class="container">
-        <nav>
-            <a href="{{ url_for('main.index') }}">룰 검색</a>
-            <a href="{{ url_for('main.upload_and_parse') }}">XML 업로드</a>
-            <a href="{{ url_for('main.analyzer') }}">룰팩 분석기</a>
-            </nav>
+      <nav>
+        <a href="{{ url_for('main.index') }}">룰 검색</a>
+        <a href="{{ url_for('main.upload_and_parse') }}">XML 업로드</a>
+        <a href="{{ url_for('main.analyzer') }}">룰팩 분석기</a>
+        <a href="{{ url_for('main.view_logs') }}">로그 보기</a>
+    </nav>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}

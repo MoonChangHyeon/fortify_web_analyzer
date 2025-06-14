@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}애플리케이션 로그{% endblock %}
+
+{% block content %}
+    <h2>애플리케이션 로그</h2>
+    <p>최신 로그가 가장 위에 표시됩니다.</p>
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color:#f2f2f2;">
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">시간 (UTC)</th>
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">상태</th>
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">메시지</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ log.status }}</td>
+                <td style="padding: 8px; border: 1px solid #ddd; white-space: pre-wrap;">{{ log.message }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="padding: 8px; border: 1px solid #ddd; text-align: center;">기록된 로그가 없습니다.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
