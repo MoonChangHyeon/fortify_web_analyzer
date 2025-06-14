@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}룰팩 업로드{% endblock %}
+
+{% block content %}
+    <h2>룰팩 XML 업로드 및 DB 저장</h2>
+    <p>분석하거나 비교하고 싶은 모든 버전의 externalmetadata.xml 파일들을 한 번에 선택하여 업로드해주세요.</p>
+    
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="xml_files">externalmetadata.xml 파일 선택 (여러 개 선택 가능):</label>
+            <input type="file" id="xml_files" name="xml_files" multiple required>
+        </div>
+        <button type="submit">업로드 및 DB 저장</button>
+    </form>
+{% endblock %}

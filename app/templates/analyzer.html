@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}룰팩 비교 분석{% endblock %}
+
+{% block content %}
+    <h2>룰팩 비교 분석기</h2>
+    <p>데이터베이스에 저장된 룰팩 중, 비교하고 싶은 대상을 2개 이상 선택하세요.</p>
+    
+    <form action="{{ url_for('main.analyzer') }}" method="post">
+        <div class="form-group">
+            <label>비교 대상 룰팩 목록:</label>
+            <br>
+            {% for pack in rule_packs %}
+            <div>
+                <input type="checkbox" name="packs_to_compare" value="{{ pack.id }}" id="pack_{{ pack.id }}">
+                <label for="pack_{{ pack.id }}">
+                    <strong>{{ pack.pack_name }}</strong> (Version: {{ pack.pack_version }})
+                </label>
+            </div>
+            {% else %}
+            <p>분석할 룰팩이 없습니다. <a href="{{ url_for('main.upload_and_parse') }}">XML 업로드</a> 페이지에서 먼저 룰팩을 업로드해주세요.</p>
+            {% endfor %}
+        </div>
+        
+        {% if rule_packs %}
+        <button type="submit">비교 분석 시작</button>
+        {% endif %}
+    </form>
+
+    {% if results %}
+        <div class="results" style="margin-top: 30px;">
+            <h3>분석 결과</h3>
+            <pre>{{ results | tojson(indent=2) }}</pre>
+        </div>
+    {% endif %}
+{% endblock %}
