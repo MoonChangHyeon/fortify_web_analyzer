@@ -28,7 +28,7 @@
         <a href="{{ url_for('main.upload_and_parse') }}">XML 업로드</a>
         <a href="{{ url_for('main.analyzer') }}">룰팩 분석기</a>
         <a href="{{ url_for('main.view_logs') }}">로그 보기</a>
-    </nav>
+      </nav>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
