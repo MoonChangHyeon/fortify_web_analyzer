@@ -3,9 +3,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 
+<head>
+    <title>룰팩 분석기</title>
+</head>
+
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </th:block>
 
 <th:block layout:fragment="content">
@@ -61,16 +64,28 @@
                     <strong>총 규칙 수:</strong> <span th:text="${results.getPackBTotalRules()} + ' 개'"></span>
                 </div>
             </div>
-
-            <div class="accordion" id="accordionAnalysis">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                            룰팩 A에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInA)}">0</span>개)
-                        </button>
-                    </h2>
-                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionAnalysis">
-                        <div class="accordion-body">
+            
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#rulesA" role="tab">
+                            <span>룰팩 A에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInA)}">0</span>개)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#rulesB" role="tab">
+                            <span>룰팩 B에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInB)}">0</span>개)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#rulesCommon" role="tab">
+                            <span>공통 규칙 (<span th:text="${#sets.size(results.commonRules)}">0</span>개)</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="rulesA" role="tabpanel">
+                        <div class="p-3">
                             <table id="rules_table_a" class="table table-sm table-striped table-bordered w-100">
                                 <thead><tr><th>규칙 이름</th></tr></thead>
                                 <tbody>
@@ -79,39 +94,21 @@
                             </table>
                         </div>
                     </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            룰팩 B에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInB)}">0</span>개)
-                        </button>
-                    </h2>
-                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionAnalysis">
-                        <div class="accordion-body">
-                            <table id="rules_table_b" class="table table-sm table-striped table-bordered w-100">
-                                <thead><tr><th>규칙 이름</th></tr></thead>
-                                <tbody>
-                                    <tr th:each="rule : ${results.onlyInB}"><td th:text="${rule}"></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="tab-pane p-3" id="rulesB" role="tabpanel">
+                        <table id="rules_table_b" class="table table-sm table-striped table-bordered w-100">
+                            <thead><tr><th>규칙 이름</th></tr></thead>
+                            <tbody>
+                                <tr th:each="rule : ${results.onlyInB}"><td th:text="${rule}"></td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            공통 규칙 (<span th:text="${#sets.size(results.commonRules)}">0</span>개)
-                        </button>
-                    </h2>
-                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionAnalysis">
-                        <div class="accordion-body">
-                            <table id="rules_table_common" class="table table-sm table-striped table-bordered w-100">
-                                <thead><tr><th>규칙 이름</th></tr></thead>
-                                <tbody>
-                                    <tr th:each="rule : ${results.commonRules}"><td th:text="${rule}"></td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="tab-pane p-3" id="rulesCommon" role="tabpanel">
+                        <table id="rules_table_common" class="table table-sm table-striped table-bordered w-100">
+                            <thead><tr><th>규칙 이름</th></tr></thead>
+                            <tbody>
+                                <tr th:each="rule : ${results.commonRules}"><td th:text="${rule}"></td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -123,4 +120,5 @@
     <script th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
     <script th:src="@{/assets/js/custom/datatable-initializer.js}"></script>
 </th:block>
+
 </html>

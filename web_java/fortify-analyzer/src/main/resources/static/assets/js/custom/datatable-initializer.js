@@ -40,6 +40,36 @@ $(function () {
     },
   });
 
+  // ✨ 상세 보기 테이블 초기화 (새로 추가)
+$("#details_mapping_table").DataTable({
+  dom: "rtip", // 검색(f)과 내보내기(B) 버튼은 제외
+  pageLength: 5, // 한 페이지에 5개씩 표시
+  language: {
+      info: "총 _TOTAL_개",
+      infoEmpty: "",
+      infoFiltered: "",
+      paginate: {
+          next: "다음",
+          previous: "이전",
+      },
+  },
+});
+
+    // ✨ 검색 결과 테이블 초기화 (새로 추가)
+    $("#search_results_table").DataTable({
+      dom: "rtip", // 검색(f)과 내보내기(B) 버튼은 제외
+      pageLength: 10, // 한 페이지에 10개씩 표시
+      language: {
+        info: "총 _TOTAL_개",
+        infoEmpty: "",
+        infoFiltered: "",
+        paginate: {
+          next: "다음",
+          previous: "이전",
+        },
+      },
+    });
+
   // ✨ 아코디언 내 테이블들 초기화 (새로 추가)
   const miniDataTableOptions = {
     dom: "frtip", // 내보내기 버튼(B) 제외, f(검색), r(처리중), t(테이블), i(정보), p(페이징)
@@ -62,3 +92,4 @@ $(function () {
   $("#rules_table_common").DataTable(miniDataTableOptions);
 
 });
+
