@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}룰팩 업로드{% endblock %}
+
+{% block content %}
+    <h2>룰팩 XML 업로드 및 DB 저장</h2>
+    <p>룰팩들이 들어있는 폴더를 선택하면, 하위 폴더를 포함한 모든 'externalmetadata.xml' 파일이 아래 목록에 나타납니다.</p>
+    
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="xml_files">룰팩들이 들어있는 폴더 선택:</label>
+            <input type="file" id="xml_files" name="xml_files" webkitdirectory directory multiple required>
+        </div>
+
+        <div id="file-list-area" style="margin-top: 15px;">
+            <h4>선택된 'externalmetadata.xml' 파일 목록:</h4>
+            <div id="file-count" style="font-weight: bold; margin-bottom: 10px;">파일 0개</div>
+            <ul id="file-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 10px;">
+                <li style="color: #888;">폴더를 선택해주세요.</li>
+            </ul>
+        </div>
+        
+        <button type="submit" style="margin-top: 15px;">업로드 및 DB 저장</button>
+    </form>
+    
+    <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}
