@@ -1,98 +1,126 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>룰팩 비교 분석</title>
-</head>
-<body>
-    <nav>
-        <a th:href="@{/}">룰 검색</a>
-        <a th:href="@{/upload}">XML 업로드</a>
-        <a th:href="@{/analyzer}">RulePack 분석기</a>
-        <a th:href="@{/logs}"><b>시스템 로그</b></a>
-    </nav>
-    <hr/>
-    <h1>룰팩 비교 분석기</h1>
-    <p>데이터베이스에 저장된 룰팩 중, 비교하고 싶은 대상을 2개 선택하세요.</p>
-    
-    <div th:if="${error}" style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 15px;">
-        <p th:text="${error}"></p>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+</th:block>
+
+<th:block layout:fragment="content">
+
+    <div class="mb-4">
+        <h4 class="fw-semibold">룰팩 비교 분석기</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">룰팩 분석기</li>
+            </ol>
+        </nav>
     </div>
 
-    <form th:action="@{/analyzer}" method="post">
-        <div class="form-group">
-            <label>비교 대상 룰팩 목록:</label>
-            <br/>
-            <div th:each="pack : ${rule_packs}">
-                <input type="checkbox" name="packs_to_compare" th:value="${pack.id}" th:id="'pack_' + ${pack.id}">
-                <label th:for="'pack_' + ${pack.id}">
-                    <strong th:text="${pack.packName}">Pack Name</strong>
-                    (<span th:text="'Version: ' + ${pack.packVersion}"></span>)
-                    <small style="color: #6c757d;" th:text="'- ' + ${pack.location}"></small>
-                </label>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">룰팩 선택</h5>
+            <p class="card-subtitle mb-3">비교하고 싶은 룰팩 2개를 선택하세요.</p>
+            
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
             </div>
-            <div th:if="${#lists.isEmpty(rule_packs)}">
-                <p>분석할 룰팩이 없습니다. <a th:href="@{/upload}">XML 업로드</a> 페이지에서 먼저 룰팩을 업로드해주세요.</p>
-            </div>
-        </div>
-        
-        <button type="submit" th:unless="${#lists.isEmpty(rule_packs)}">비교 분석 시작</button>
-    </form>
 
-    <div th:if="${results}" style="margin-top: 30px; border-top: 2px solid blue; padding-top: 20px;">
-        <h3>분석 결과 요약</h3>
-        <table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-                <tr style="background-color:#f2f2f2;">
-                    <th>항목</th>
-                    <th>룰팩 A</th>
-                    <th>룰팩 B</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Rule Version</strong></td>
-                    <td th:text="${results.packA.packVersion}"></td>
-                    <td th:text="${results.packB.packVersion}"></td>
-                </tr>
-                <tr>
-                    <td><strong>Location</strong></td>
-                    <td th:text="${results.packA.location}"></td>
-                    <td th:text="${results.packB.location}"></td>
-                </tr>
-                <tr>
-                    <td><strong>취약점 리스트 갯수</strong></td>
-                    <td th:text="${results.getPackATotalRules()} + ' 개'"></td>
-                    <td th:text="${results.getPackBTotalRules()} + ' 개'"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <hr style="margin: 30px 0;">
-
-        <h3>매핑 정보 상세 비교</h3>
-        <div style="display: flex; gap: 20px;">
-            <div style="flex: 1;">
-                <h4>룰팩 A에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInA)}">0</span>개)</h4>
-                <ul>
-                    <li th:each="rule : ${results.onlyInA}" th:text="${rule}">Rule Name</li>
-                    <li th:if="${#sets.isEmpty(results.onlyInA)}">없음</li>
-                </ul>
-            </div>
-            <div style="flex: 1;">
-                <h4>룰팩 B에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInB)}">0</span>개)</h4>
-                <ul>
-                    <li th:each="rule : ${results.onlyInB}" th:text="${rule}">Rule Name</li>
-                    <li th:if="${#sets.isEmpty(results.onlyInB)}">없음</li>
-                </ul>
-            </div>
-        </div>
-        <div>
-            <h4>공통 규칙 (<span th:text="${#sets.size(results.commonRules)}">0</span>개)</h4>
-            <ul>
-                <li th:each="rule : ${results.commonRules}" th:text="${rule}">Rule Name</li>
-                <li th:if="${#sets.isEmpty(results.commonRules)}">없음</li>
-            </ul>
+            <form th:action="@{/analyzer}" method="post">
+                <div class="form-group mb-3">
+                    <div th:each="pack : ${rule_packs}" class="form-check">
+                        <input class="form-check-input" type="checkbox" name="packs_to_compare" th:value="${pack.id}" th:id="'pack_' + ${pack.id}" />
+                        <label class="form-check-label" th:for="'pack_' + ${pack.id}">
+                            <strong th:text="${pack.packName}">Pack Name</strong>
+                            (<span th:text="'Version: ' + ${pack.packVersion}"></span>)
+                            - <small class="text-muted" th:text="${pack.location}"></small>
+                        </label>
+                    </div>
+                    <div th:if="${#lists.isEmpty(rule_packs)}">
+                        <p>분석할 룰팩이 없습니다. <a th:href="@{/upload}">XML 업로드</a> 페이지에서 먼저 룰팩을 업로드해주세요.</p>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" th:unless="${#lists.isEmpty(rule_packs)}">비교 분석 시작</button>
+            </form>
         </div>
     </div>
-</body>
+
+    <div class="card" th:if="${results}">
+        <div class="card-body">
+            <h5 class="card-title">분석 결과 요약</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>룰팩 A:</strong> <span th:text="${results.packA.packName} + ' (v' + ${results.packA.packVersion} + ')'"></span><br/>
+                    <strong>총 규칙 수:</strong> <span th:text="${results.getPackATotalRules()} + ' 개'"></span>
+                </div>
+                <div class="col-md-6">
+                    <strong>룰팩 B:</strong> <span th:text="${results.packB.packName} + ' (v' + ${results.packB.packVersion} + ')'"></span><br/>
+                    <strong>총 규칙 수:</strong> <span th:text="${results.getPackBTotalRules()} + ' 개'"></span>
+                </div>
+            </div>
+
+            <div class="accordion" id="accordionAnalysis">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            룰팩 A에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInA)}">0</span>개)
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionAnalysis">
+                        <div class="accordion-body">
+                            <table id="rules_table_a" class="table table-sm table-striped table-bordered w-100">
+                                <thead><tr><th>규칙 이름</th></tr></thead>
+                                <tbody>
+                                    <tr th:each="rule : ${results.onlyInA}"><td th:text="${rule}"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            룰팩 B에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInB)}">0</span>개)
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionAnalysis">
+                        <div class="accordion-body">
+                            <table id="rules_table_b" class="table table-sm table-striped table-bordered w-100">
+                                <thead><tr><th>규칙 이름</th></tr></thead>
+                                <tbody>
+                                    <tr th:each="rule : ${results.onlyInB}"><td th:text="${rule}"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            공통 규칙 (<span th:text="${#sets.size(results.commonRules)}">0</span>개)
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionAnalysis">
+                        <div class="accordion-body">
+                            <table id="rules_table_common" class="table table-sm table-striped table-bordered w-100">
+                                <thead><tr><th>규칙 이름</th></tr></thead>
+                                <tbody>
+                                    <tr th:each="rule : ${results.commonRules}"><td th:text="${rule}"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/assets/js/custom/datatable-initializer.js}"></script>
+</th:block>
 </html>
