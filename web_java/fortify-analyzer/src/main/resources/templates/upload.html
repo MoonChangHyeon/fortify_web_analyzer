@@ -5,6 +5,13 @@
     <title>Upload XML Files</title>
 </head>
 <body>
+    <nav>
+        <a th:href="@{/}">룰 검색</a>
+        <a th:href="@{/upload}">XML 업로드</a>
+        <a th:href="@{/analyzer}">RulePack 분석기</a>
+        <a th:href="@{/logs}"><b>시스템 로그</b></a>
+    </nav>
+    <hr/>
     <h1>Upload Fortify External Metadata XML Files</h1>
 
     <div th:if="${message}" style="color: green;">

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>룰팩 비교 분석</title>
+</head>
+<body>
+    <nav>
+        <a th:href="@{/}">룰 검색</a>
+        <a th:href="@{/upload}">XML 업로드</a>
+        <a th:href="@{/analyzer}">RulePack 분석기</a>
+        <a th:href="@{/logs}"><b>시스템 로그</b></a>
+    </nav>
+    <hr/>
+    <h1>룰팩 비교 분석기</h1>
+    <p>데이터베이스에 저장된 룰팩 중, 비교하고 싶은 대상을 2개 선택하세요.</p>
+    
+    <div th:if="${error}" style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 15px;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/analyzer}" method="post">
+        <div class="form-group">
+            <label>비교 대상 룰팩 목록:</label>
+            <br/>
+            <div th:each="pack : ${rule_packs}">
+                <input type="checkbox" name="packs_to_compare" th:value="${pack.id}" th:id="'pack_' + ${pack.id}">
+                <label th:for="'pack_' + ${pack.id}">
+                    <strong th:text="${pack.packName}">Pack Name</strong>
+                    (<span th:text="'Version: ' + ${pack.packVersion}"></span>)
+                    <small style="color: #6c757d;" th:text="'- ' + ${pack.location}"></small>
+                </label>
+            </div>
+            <div th:if="${#lists.isEmpty(rule_packs)}">
+                <p>분석할 룰팩이 없습니다. <a th:href="@{/upload}">XML 업로드</a> 페이지에서 먼저 룰팩을 업로드해주세요.</p>
+            </div>
+        </div>
+        
+        <button type="submit" th:unless="${#lists.isEmpty(rule_packs)}">비교 분석 시작</button>
+    </form>
+
+    <div th:if="${results}" style="margin-top: 30px; border-top: 2px solid blue; padding-top: 20px;">
+        <h3>분석 결과 요약</h3>
+        <table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+                <tr style="background-color:#f2f2f2;">
+                    <th>항목</th>
+                    <th>룰팩 A</th>
+                    <th>룰팩 B</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Rule Version</strong></td>
+                    <td th:text="${results.packA.packVersion}"></td>
+                    <td th:text="${results.packB.packVersion}"></td>
+                </tr>
+                <tr>
+                    <td><strong>Location</strong></td>
+                    <td th:text="${results.packA.location}"></td>
+                    <td th:text="${results.packB.location}"></td>
+                </tr>
+                <tr>
+                    <td><strong>취약점 리스트 갯수</strong></td>
+                    <td th:text="${results.getPackATotalRules()} + ' 개'"></td>
+                    <td th:text="${results.getPackBTotalRules()} + ' 개'"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr style="margin: 30px 0;">
+
+        <h3>매핑 정보 상세 비교</h3>
+        <div style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <h4>룰팩 A에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInA)}">0</span>개)</h4>
+                <ul>
+                    <li th:each="rule : ${results.onlyInA}" th:text="${rule}">Rule Name</li>
+                    <li th:if="${#sets.isEmpty(results.onlyInA)}">없음</li>
+                </ul>
+            </div>
+            <div style="flex: 1;">
+                <h4>룰팩 B에만 있는 규칙 (<span th:text="${#sets.size(results.onlyInB)}">0</span>개)</h4>
+                <ul>
+                    <li th:each="rule : ${results.onlyInB}" th:text="${rule}">Rule Name</li>
+                    <li th:if="${#sets.isEmpty(results.onlyInB)}">없음</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <h4>공통 규칙 (<span th:text="${#sets.size(results.commonRules)}">0</span>개)</h4>
+            <ul>
+                <li th:each="rule : ${results.commonRules}" th:text="${rule}">Rule Name</li>
+                <li th:if="${#sets.isEmpty(results.commonRules)}">없음</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
