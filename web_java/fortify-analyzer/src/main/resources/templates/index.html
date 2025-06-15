@@ -8,55 +8,71 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </th:block>
 
-<div layout:fragment="content">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">룰 이름으로 외부 표준 검색하기</h4>
-            <p class="card-subtitle mb-3">
-                검색할 룰 이름(Internal Category)의 일부를 입력하세요.
-            </p>
-            <form th:action="@{/}" method="get" class="d-flex gap-2">
-                <input type="text" name="keyword" class="form-control" placeholder="예: 'Code Injection'" th:value="${searchKeyword}">
-                <button type="submit" class="btn btn-primary">검색</button>
-            </form>
+<th:block layout:fragment="content">
+
+    <div class="mb-4">
+        <h4 class="fw-semibold">룰 검색</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">룰 검색</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12"> <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">룰 이름으로 외부 표준 검색하기</h5>
+                    <p class="card-subtitle mb-3">
+                        검색할 룰 이름(Internal Category)의 일부를 입력하세요.
+                    </p>
+                    <form th:action="@{/}" method="get" class="d-flex gap-2">
+                        <input type="text" name="keyword" class="form-control" placeholder="예: 'Code Injection'" th:value="${searchKeyword}" />
+                        <button type="submit" class="btn btn-primary">검색</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <h5 class="card-title mb-0">검색 결과</h5>
+                    </div>
+                    <p class="card-subtitle mb-3" th:if="${searchKeyword != null and !searchKeyword.isEmpty()}">
+                        '<strong th:text="${searchKeyword}"></strong>'에 대한 검색 결과입니다.
+                    </p>
+
+                    <div class="table-responsive" th:if="${results != null and not #lists.isEmpty(results)}">
+                        <table id="rule_search_table" class="table w-100 table-striped table-bordered display text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>룰 이름 (Internal Category)</th>
+                                    <th>외부 표준 정보 (External Category)</th>
+                                    <th>룰팩 버전</th>
+                                    <th>룰팩 위치</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="result : ${results}">
+                                    <td th:text="${result.rule.ruleName}"></td>
+                                    <td th:text="${result.standardInfo}"></td>
+                                    <td th:text="${result.rule.rulePack.packVersion}"></td>
+                                    <td th:text="${result.rule.rulePack.location}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-center p-4" th:if="${results == null or #lists.isEmpty(results)}">
+                        <p>검색 결과가 없습니다.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="mb-2">
-                <h4 class="card-title mb-0">검색 결과</h4>
-            </div>
-            <p class="card-subtitle mb-3" th:if="${searchKeyword != null and !searchKeyword.isEmpty()}">
-                '<strong th:text="${searchKeyword}"></strong>'에 대한 검색 결과입니다.
-            </p>
-
-            <div class="table-responsive">
-                <table id="rule_search_table" class="table w-100 table-striped table-bordered display text-nowrap">
-                    <thead>
-                        <tr>
-                            <th>룰 이름 (Internal Category)</th>
-                            <th>외부 표준 정보 (External Category)</th>
-                            <th>룰팩 버전</th>
-                            <th>룰팩 위치</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:if="${results != null}" th:each="result : ${results}">
-                            <td th:text="${result.rule.ruleName}"></td>
-                            <td th:text="${result.standardInfo}"></td>
-                            <td th:text="${result.rule.rulePack.packVersion}"></td>
-                            <td th:text="${result.rule.rulePack.location}"></td>
-                        </tr>
-                        <tr th:if="${results == null or #lists.isEmpty(results)}">
-                            <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+</th:block>
 
 <th:block layout:fragment="script">
     <script th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
