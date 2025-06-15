@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>XML 업로드</title>
-    </head>
+    <meta charset="UTF-8">
+    <title>Upload XML Files</title>
+</head>
 <body>
-    <h1>룰팩 XML 업로드 및 DB 저장</h1>
-    <p>룰팩들이 들어있는 폴더를 선택하면, 하위 폴더를 포함한 모든 'externalmetadata.xml' 파일이 처리됩니다.</p>
-    
-    <div th:if="${message}" style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 15px;" th:text="${message}"></div>
-    <div th:if="${error}" style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 15px;" th:text="${error}"></div>
-    <div th:if="${warning}" style="color: orange; border: 1px solid orange; padding: 10px; margin-bottom: 15px;" th:text="${warning}"></div>
+    <h1>Upload Fortify External Metadata XML Files</h1>
 
-    <form method="post" action="/upload" enctype="multipart/form-data">
-        <div>
-            <label for="xml_files">룰팩들이 들어있는 폴더 선택:</label><br/>
-            <input type="file" id="xml_files" name="xml_files" webkitdirectory directory multiple required>
-        </div>
-        <br/>
-        <button type="submit">업로드 및 DB 저장</button>
+    <div th:if="${message}" style="color: green;">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>
+    <div th:if="${warning}" style="color: orange;">
+        <p th:text="${warning}"></p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" th:action="@{/upload}">
+        <p>
+            Select externalmetadata.xml files to upload: <br/>
+            <input type="file" name="xml_files" multiple="multiple" accept=".xml" />
+        </p>
+        <p><input type="submit" value="Upload" /></p>
     </form>
 </body>
 </html>
