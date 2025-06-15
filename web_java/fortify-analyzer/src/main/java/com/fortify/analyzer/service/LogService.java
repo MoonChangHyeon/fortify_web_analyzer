@@ -3,7 +3,7 @@ package com.fortify.analyzer.service;
 
 import com.fortify.analyzer.entity.Log;
 import com.fortify.analyzer.repository.LogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,10 +11,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 @Service
+@RequiredArgsConstructor
 public class LogService {
 
-    @Autowired
-    private LogRepository logRepository;
+    private final LogRepository logRepository;
 
     /**
      * 일반 정보 로그를 기록합니다.

@@ -2,7 +2,7 @@ package com.fortify.analyzer.service;
 
 import com.fortify.analyzer.entity.Rule;
 import com.fortify.analyzer.repository.RuleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,10 +12,10 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SearchService {
 
-    @Autowired
-    private RuleRepository ruleRepository;
+    private final RuleRepository ruleRepository;
 
     // ✨ 중복 제거 로직이 포함된 검색 메소드
     public List<Rule> searchRulesByName(String keyword) {
