@@ -1,52 +1,72 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>룰 검색</title>
-    </head>
-<body>
-    <nav>
-        <a th:href="@{/}">룰 검색</a>
-        <a th:href="@{/upload}">XML 업로드</a>
-        <a th:href="@{/analyzer}">RulePack 분석기</a>
-        <a th:href="@{/logs}"><b>시스템 로그</b></a>
-    </nav>
-    <hr/>
-    <h1>룰 이름으로 외부 표준 검색하기</h1>
-    <p>검색할 규칙 이름의 일부를 입력하세요.</p>
-    
-    <form action="/" method="get">
-        <div>
-            <label for="keyword">규칙 이름:</label>
-            <input type="text" id="keyword" name="keyword" required th:value="${searchedTerm} ?: ''">
-        </div>
-        <br/>
-        <button type="submit">검색</button>
-    </form>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 
-    <hr style="margin: 20px 0;">
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+</th:block>
 
-    <div class="results">
-        <div th:if="${foundRules}">
-            <h3>
-                '<span th:text="${searchedTerm}"></span>'(으)로 검색된 규칙 목록
-                (<span th:text="${#lists.size(foundRules)}">0</span>개)
-            </h3>
-            <p>아래 목록에서 상세 정보를 볼 규칙을 선택하세요.</p>
-            <ul>
-                <li th:each="rule : ${foundRules}">
-                    <a th:href="@{/(ruleId=${rule.id})}" th:text="${rule.ruleName}">Rule Name</a>
-                </li>
-            </ul>
-        </div>
-
-        <div th:if="${selectedRule}">
-            <h3>✅ 선택된 규칙: '<span th:text="${selectedRule.ruleName}"></span>'</h3>
-            <p>이 규칙과 관련된 외부 표준 목록입니다:</p>
-            <ul th:if="${mappings != null and not #lists.isEmpty(mappings)}">
-                <li th:each="mapping : ${mappings}" th:text="${mapping.standardInfo}">Standard Info</li>
-            </ul>
-            <p th:if="${mappings == null or #lists.isEmpty(mappings)}">관련된 외부 표준 정보가 없습니다.</p>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">룰 이름으로 외부 표준 검색하기</h4>
+            <p class="card-subtitle mb-3">
+                검색할 룰 이름(Internal Category)의 일부를 입력하세요.
+            </p>
+            <form th:action="@{/}" method="get" class="d-flex gap-2">
+                <input type="text" name="keyword" class="form-control" placeholder="예: 'Code Injection'" th:value="${searchKeyword}">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </form>
         </div>
     </div>
-</body>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-2">
+                <h4 class="card-title mb-0">검색 결과</h4>
+            </div>
+            <p class="card-subtitle mb-3" th:if="${searchKeyword != null and !searchKeyword.isEmpty()}">
+                '<strong th:text="${searchKeyword}"></strong>'에 대한 검색 결과입니다.
+            </p>
+
+            <div class="table-responsive">
+                <table id="rule_search_table" class="table w-100 table-striped table-bordered display text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>룰 이름 (Internal Category)</th>
+                            <th>외부 표준 정보 (External Category)</th>
+                            <th>룰팩 버전</th>
+                            <th>룰팩 위치</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${results != null}" th:each="result : ${results}">
+                            <td th:text="${result.rule.ruleName}"></td>
+                            <td th:text="${result.standardInfo}"></td>
+                            <td th:text="${result.rule.rulePack.packVersion}"></td>
+                            <td th:text="${result.rule.rulePack.location}"></td>
+                        </tr>
+                        <tr th:if="${results == null or #lists.isEmpty(results)}">
+                            <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script th:src="@{/assets/js/custom/datatable-initializer.js}"></script>
+</th:block>
+
 </html>
