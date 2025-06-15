@@ -5,7 +5,7 @@ import com.fortify.analyzer.dto.AnalysisResult;
 import com.fortify.analyzer.entity.RulePack;
 import com.fortify.analyzer.repository.RulePackRepository;
 import com.fortify.analyzer.service.AnalyzerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,13 +17,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class AnalyzerController {
 
-    @Autowired
-    private RulePackRepository rulePackRepository;
+    private final RulePackRepository rulePackRepository;
 
-    @Autowired
-    private AnalyzerService analyzerService;
+    private final AnalyzerService analyzerService;
     
     // GET /analyzer 요청을 처리합니다. (페이지 최초 로딩)
     @GetMapping("/analyzer")

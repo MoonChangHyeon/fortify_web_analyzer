@@ -2,7 +2,7 @@ package com.fortify.analyzer.controller;
 
 import com.fortify.analyzer.service.LogService;
 import com.fortify.analyzer.service.UploadService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,14 +13,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class UploadController {
 
-    @Autowired
-    private UploadService uploadService;
+    private final UploadService uploadService;
 
     // ✨ 로그 서비스를 컨트롤러에 주입합니다.
-    @Autowired
-    private LogService logService;
+    private final LogService logService;
 
     @GetMapping("/upload")
     public String uploadPage() {
