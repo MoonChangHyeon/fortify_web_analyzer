@@ -5,7 +5,7 @@ import com.fortify.analyzer.dto.AnalysisResult;
 import com.fortify.analyzer.entity.Rule;
 import com.fortify.analyzer.entity.RulePack;
 import com.fortify.analyzer.repository.RulePackRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AnalyzerService {
 
-    @Autowired
-    private RulePackRepository rulePackRepository;
+    private final RulePackRepository rulePackRepository;
 
     @Transactional(readOnly = true) // DB에서 읽기만 하므로 readOnly=true 옵션으로 성능을 최적화합니다.
     public AnalysisResult analyzeRulePacks(List<Long> packIds) {

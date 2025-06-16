@@ -5,7 +5,7 @@ import com.fortify.analyzer.entity.Rule;
 import com.fortify.analyzer.entity.RulePack;
 import com.fortify.analyzer.repository.RulePackRepository;
 import com.fortify.analyzer.repository.RuleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 이 import는 유지됩니다.
 import org.springframework.web.multipart.MultipartFile;
@@ -28,16 +28,14 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
 @Service
+@RequiredArgsConstructor
 public class UploadService {
 
-    @Autowired
-    private LogService logService;
-    
-    @Autowired
-    private RulePackRepository rulePackRepository;
+    private final LogService logService;
 
-    @Autowired
-    private RuleRepository ruleRepository;
+    private final RulePackRepository rulePackRepository;
+
+    private final RuleRepository ruleRepository;
 
     // ✨ @Transactional 어노테이션 제거. 예외 처리는 Controller에서 담당.
     public String processAndSaveFile(MultipartFile file) throws Exception {
