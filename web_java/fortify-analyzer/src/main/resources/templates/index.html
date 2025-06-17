@@ -34,16 +34,40 @@
                 </div>
             </div>
 
+            <div class="card" th:if="${searchResult != null and searchResult.uniqueRuleCount > 0}">
+                <div class="card-body">
+                    <h5 class="card-title">검색 통계 요약</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                '<strong th:text="${searchResult.searchKeyword}"></strong>'에 대한 검색 결과, 
+                                총 <strong class="text-primary" th:text="${searchResult.uniqueRuleCount}">0</strong>개의 고유한 규칙을 찾았습니다.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>주요 외부 표준 (상위 5개):</strong>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    th:each="stat : ${searchResult.getSortedStandardCounts()}">
+                                    <span th:text="${stat.key}">Standard Name</span>
+                                    <span class="badge bg-primary rounded-pill" th:text="${stat.value} + '회'">14</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div th:class="${selectedRule != null} ? 'col-lg-5' : 'col-lg-12'">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">검색된 규칙 목록</h5>
-                            <div class="table-responsive" th:if="${foundRules != null and not #lists.isEmpty(foundRules)}">
+                            <div class="table-responsive" th:if="${searchResult != null and not #lists.isEmpty(searchResult.foundRules)}">
                                 <table id="search_results_table" class="table table-sm w-100">
                                     <thead><tr><th>규칙 이름 (클릭하여 상세 보기)</th></tr></thead>
                                     <tbody>
-                                        <tr th:each="rule : ${foundRules}">
+                                        <tr th:each="rule : ${searchResult.foundRules}">
                                             <td>
                                                 <a th:href="@{/(ruleId=${rule.id}, keyword=${searchKeyword})}" th:text="${rule.ruleName}"></a>
                                             </td>
@@ -51,7 +75,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="text-center p-4" th:if="${foundRules == null or #lists.isEmpty(foundRules)}">
+                            <div class="text-center p-4" th:if="${searchResult == null or #lists.isEmpty(searchResult.foundRules)}">
                                 <p th:if="${searchKeyword}">'<span th:text="${searchKeyword}"></span>'에 대한 검색 결과가 없습니다.</p>
                                 <p th:unless="${searchKeyword}">검색어를 입력하세요.</p>
                             </div>
@@ -60,56 +84,7 @@
                 </div>
 
                 <div class="col-lg-7" th:if="${selectedRule != null}">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">상세 정보: <span class="text-primary" th:text="${selectedRule.ruleName}"></span></h5>
-                            <hr>
-                            
-                            <div class="accordion" id="detailsAccordion">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMappings">
-                                            연관된 외부 표준 목록 (<span th:text="${#lists.size(selectedRule.mappings)}">0</span>개)
-                                        </button>
-                                    </h2>
-                                    <div id="collapseMappings" class="accordion-collapse collapse show" data-bs-parent="#detailsAccordion">
-                                        <div class="accordion-body">
-                                            <table id="details_mapping_table" class="table table-sm table-striped w-100">
-                                                <thead><tr><th>외부 표준 정보 (External Category)</th></tr></thead>
-                                                <tbody>
-                                                    <tr th:each="mapping : ${selectedRule.mappings}">
-                                                        <td th:text="${mapping.standardInfo}"></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRulePackInfo">
-                                            룰팩 정보
-                                        </button>
-                                    </h2>
-                                    <div id="collapseRulePackInfo" class="accordion-collapse collapse" data-bs-parent="#detailsAccordion">
-                                        <div class="accordion-body">
-                                            <p class="card-text mb-0">
-                                                <strong>팩 이름:</strong> <span th:text="${selectedRule.rulePack.packName}"></span>
-                                            </p>
-                                            <p class="card-text mb-0">
-                                                <strong>팩 버전:</strong> <span th:text="${selectedRule.rulePack.packVersion}"></span>
-                                            </p>
-                                            <p class="card-text mb-0">
-                                                <strong>파일 위치:</strong> <span th:text="${selectedRule.rulePack.location}"></span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -119,5 +94,4 @@
     <script th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
     <script th:src="@{/assets/js/custom/datatable-initializer.js}"></script>
 </th:block>
-
 </html>

@@ -2,15 +2,13 @@ package com.fortify.analyzer.repository;
 
 import com.fortify.analyzer.entity.Rule;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
-import java.util.Optional; // ✨ 이 줄이 추가되었습니다!
+import java.util.Optional;
 
-@Repository
 public interface RuleRepository extends JpaRepository<Rule, Long> {
-
+    
     List<Rule> findByRuleNameContainingIgnoreCase(String keyword);
-
-    Optional<Rule> findByRuleName(String ruleName);
+    
+    // findById는 JpaRepository에 이미 있으므로 아래 라인은 삭제해도 무방합니다.
+    // Optional<Rule> findById(Long id);
 }
